@@ -1,6 +1,6 @@
 Vue.component('pane', {
   template: '\
-    <div class="pane" v-show="show"> \
+    <div class="pane"> \
       <slot></slot> \
     </div>',
   props: {

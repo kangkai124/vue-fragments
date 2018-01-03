@@ -4,6 +4,7 @@
 .tabs {
   font-size: 14px;
   color: #657180;
+  overflow: hidden;
 }
 .tabs-bar::after {
   content: '';
@@ -39,4 +40,16 @@
 }
 .tabs-content {
   padding: 8px 0;
+  display: flex;
+  transition: transform .3s ease-in-out;
+}
+.pane {
+  flex-shrink: 0;
+  width: 100%;
+}
+span {
+  display: inline-block;
+  color: rgb(21, 230, 186);
+  width: 16px;
+  text-align: center;
 }

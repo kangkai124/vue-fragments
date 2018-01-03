@@ -7,12 +7,12 @@ Vue.component('tabs', {
           v-for="(item, index) in navList" \
           @click="handleChange(index)"> \
           {{ item.label }} \
-          <span v-if="item.closable"> \
+          <span v-if="item.closable" @click.stop="handleRemove(index)"> \
             x \
           </span> \
         </div> \
       </div> \
-      <div class="tabs-content"> \
+      <div class="tabs-content" :style="currentStyle"> \
         <slot></slot> \
       </div> \
     </div>',
@@ -28,7 +28,19 @@ Vue.component('tabs', {
     }
   },
   mounted() {
-    console.log(this.value)
+  },
+  computed: {
+    currentStyle () {
+      const x = this.navList.findIndex((nav) => nav.name === this.currentValue)
+      const p = x === 0 ? '0%' : `-${x}00%`
+      let style = {}
+      if (x > -1 ) {
+        style = {
+          transform: `translateX(${p}) translateZ(0px)`
+        }
+      }
+      return style
+    }
   },
   methods: {
     getTabs () {
@@ -77,6 +89,30 @@ Vue.component('tabs', {
       this.$emit('input', name)
       // 触发一个自定义事件，供父级使用
       this.$emit('on-click', name)
+    },
+    handleRemove (index) {
+      const tabs = this.getTabs()
+      const tab = tabs[index]
+      tab.$destroy()
+
+      if (tab.name === this.currentValue) {
+        const newTabs = this.getTabs()
+        let currentValue = -1
+        if (newTabs.length) {
+          const leftTabs = tabs.filter((item, itemIndex) => itemIndex < index)
+          const rightTabs = tabs.filter((item, itemIndex) => itemIndex > index)
+          if (rightTabs.length) {
+            currentValue = rightTabs[0].name
+          } else if (leftTabs.length) {
+            currentValue = leftTabs[leftTabs.length - 1].name
+          } else {
+            currentValue = newTabs[0]
+          }
+        }
+        this.currentValue = currentValue
+      }
+      this.$emit('on-tab-close', tab.name)
+      this.updateNav()
     }
   },
   watch: {

@@ -9,14 +9,14 @@
 </head>
 <body>
   <div id="app" v-cloak>
-    <tabs :value="activeKey">
-      <pane label="标签一" name="1">
+    <tabs :value="activeKey" @on-tab-close="handleRemove">
+      <pane label="标签一" name="1" v-if="tab1">
         标签一的内容
       </pane>
-      <pane label="标签二" name="2" :closable="true">
+      <pane label="标签二" name="2" :closable="true" v-if="tab2">
         标签二的内容 可关闭
       </pane>
-      <pane label="标签三" name="3">
+      <pane label="标签三" name="3" v-if="tab3">
         标签三的内容
       </pane>
     </tabs>
@@ -28,7 +28,15 @@
     var app = new Vue({
       el: '#app',
       data: {
-        activeKey: '3'
+        activeKey: '3',
+        tab1: true,
+        tab2: true,
+        tab3: true
+      },
+      methods: {
+        handleRemove (name) {
+          this['tab' + name] = false
+        }
       }
     })
   </script>
