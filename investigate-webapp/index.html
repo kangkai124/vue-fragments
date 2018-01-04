@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>invesigate webapp</title>
+  <link rel="stylesheet" href="index.css">
+  <script>
+  (function (doc, win) {
+          var docEl = doc.documentElement,
+              resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+              recalc = function () {
+                  var clientWidth = docEl.clientWidth;
+                  if (!clientWidth) return;
+                  if(clientWidth>=640){
+                      docEl.style.fontSize = '100px';
+                  }else{
+                      docEl.style.fontSize = 100 * (clientWidth / 640) + 'px';
+                  }
+              };
+
+          if (!doc.addEventListener) return;
+          win.addEventListener(resizeEvt, recalc, false);
+          doc.addEventListener('DOMContentLoaded', recalc, false);
+      })(document, window);
+  </script>
+</head>
+<body>
+  <div id="app" v-cloak>
+    <div class="content" v-show="currentIndex === 0">
+      <h2>{{ currentIndex + 1 }}. 性别</h2>
+      <input type="radio" v-model="radioPicked" id="man" value="man">
+      <label for="man">man</label>
+      <br />
+      <input type="radio" v-model="radioPicked" id="woman" value="woman">
+      <label for="woman">woman</label>
+      <br />
+      <input type="radio" v-model="radioPicked" id="secret" value="secret">
+      <label for="secret">secret</label>
+    </div>
+
+    <div class="content" v-show="currentIndex === 1">
+      <h2>{{ currentIndex + 1 }}. 爱好</h2>
+      <input type="checkbox" v-model="checkboxPicked" id="basketball" value="basketball">
+      <label for="basketball">basketball</label>
+      <br />
+      <input type="checkbox" v-model="checkboxPicked" id="guitar" value="guitar">
+      <label for="guitar">guitar</label>
+      <br />
+      <input type="checkbox" v-model="checkboxPicked" id="code" value="code">
+      <label for="code">code</label>
+      <br />
+      <input type="checkbox" v-model="checkboxPicked" id="sleep" value="sleep">
+      <label for="sleep">sleep</label>
+      <br />
+      <input type="checkbox" v-model="checkboxPicked" id="eat" value="eat">
+      <label for="eat">eat</label>
+      <br />
+      <input type="checkbox" v-model="checkboxPicked" id="girl" value="girl">
+      <label for="girl">girl</label>
+    </div>
+    <div class="content" v-show="currentIndex === 2">
+      <h1>{{ currentIndex + 1}}. 介绍</h1>
+      <textarea v-model="description" rows="4" cols="40"></textarea>
+    </div>
+    <div class='option'>
+      <k-button color="#2ee" @on-click="handlePre" :disabled="currentIndex <= 0">上一题</k-button>
+      <k-button @on-click="handleNext" :disabled="currentIndex >=2">下一题</k-button>
+      <k-button @on-click="handleReset" v-show="currentIndex !== 2" :disabled="currentIndex === 0">重置</k-button>
+      <k-button @on-click="handleSubmit" v-show="currentIndex === 2">提交</k-button>
+    </div>
+  </div>
+
+  <script src="https://cdn.bootcss.com/vue/2.5.13/vue.min.js"></script>
+  <script src='k-button.js'></script>
+  <script>
+    new Vue({
+      el: '#app',
+      data: {
+        currentIndex: 0,
+        radioPicked: '',
+        checkboxPicked: [],
+        description: '',
+        message: ''
+      },
+      methods: {
+        handlePre () {
+          if (this.currentIndex <= 0) {
+            return
+          } else {
+            this.currentIndex -= 1
+          }
+        },
+        handleNext () {
+          if (this.clickable()) {
+            if (this.currentIndex >= 2) {
+              return
+            } else {
+              this.currentIndex += 1
+            }
+          } else {
+            alert(this.message)
+          }
+        },
+        handleSubmit () {
+          if (this.clickable()) {
+            alert ('提交成功')
+            this.handleReset()
+          } else {
+            alert(this.message)
+          }
+        },
+        clickable () {
+          switch (this.currentIndex) {
+            case 0:
+              if (this.radioPicked) {
+                return true
+              } else {
+                this.message = '请选择一项'
+                return false
+              }
+              break;
+            case 1:
+              if (this.checkboxPicked.length >= 2) {
+                return true
+              } else {
+                this.message = '请至少选择两项'
+                return false
+              }
+              break;
+            case 2:
+              if (this.description.length >= 10) {
+                return true
+              } else {
+                this.message = '请至少输入10个字符'
+                return false
+              }
+              break;
+            default:
+              break;
+          }
+        },
+        handleReset () {
+          this.currentIndex = 0
+          this.radioPicked = ''
+          this.checkboxPicked = []
+          this.description = ''
+          this.message = ''
+        }
+      }
+    })
+  </script>
+</body>
+</html>
